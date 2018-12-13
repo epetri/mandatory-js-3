@@ -31,8 +31,12 @@ button.addEventListener('click', function(){
 function getIMG(x){
   let info = new XMLHttpRequest();
   info.addEventListener("load", img);
-  info.open('GET', 'https://dog.ceo/api/breeds/image/random');
-  info.send ();
+  if(window.location.hash){
+    info.open('GET', 'https://dog.ceo/api/breed/' + window.location.hash.substring(1) + '/images/random');
+  } else {
+    info.open('GET', 'https://dog.ceo/api/breeds/image/random');
+  }
+  info.send();
 }
 
 function img() {
@@ -48,7 +52,6 @@ function img() {
 function displayBreed(y){
   let array = [];
   array = y.split('/');
-
   h4.textContent = array[4];
 }
 
@@ -81,27 +84,23 @@ function getBreeds(){
   getBreeds();
 
 function clickOnBreed(event, dog) {
-  debugger;
-  if (dropDown.style.display === 'block'){
+    if (dropDown.style.display === 'block'){
     dropDown.style.display = 'none';}
-    imgCont.innerHTML = '';
-    let req = new XMLHttpRequest();
+
+  imgCont.innerHTML = '';
+  let req = new XMLHttpRequest();
 
 
-    let clicked = event.target.textContent;
+  let clicked = event.target.textContent;
     if(!window.location.hash.includes(clicked)){
       req.open("GET", "https://dog.ceo/api/breed/" + clicked +"/images/random");
-        window.location.hash = clicked;
-    } else if (window.location.hash.includes('-')) {
-      req.open("GET", "https://dog.ceo/api/breed/" + dog + '-' + clicked +"/images/random");
-    }
-
-
-    console.log(req);
-
+      window.location.hash = clicked;
+      } else if (window.location.hash.includes('-')) {
+        req.open("GET", "https://dog.ceo/api/breed/" + dog + '-' + clicked +"/images/random");
+      }
     req.addEventListener("load", img);
     req.send();
-  }
+}
 
 function subBreed(parse, event){
 for (let dog in parse.message){
@@ -113,8 +112,8 @@ for (let dog in parse.message){
       breedList.appendChild(li);
 
       li.addEventListener('click', function(event){
+        window.location.hash = dog + "-" + getSub[sub];
         clickOnBreed(event, dog);
-        window.location.hash = "/" + dog + "-" + getSub[sub];
     });
    }
   }
